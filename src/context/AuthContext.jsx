@@ -15,7 +15,18 @@ export const AuthProvider = ({ children }) => {
                 console.log('Checking session...');
                 const startTime = Date.now();
 
-                const { data: { session }, error } = await supabase.auth.getSession();
+                // Add timeout that returns null session instead of throwing error
+                const timeoutPromise = new Promise((resolve) =>
+                    setTimeout(() => {
+                        console.warn('Session check timeout after 15s - continuing as logged out');
+                        resolve({ data: { session: null }, error: null });
+                    }, 15000)
+                );
+
+                const { data: { session }, error } = await Promise.race([
+                    supabase.auth.getSession(),
+                    timeoutPromise
+                ]);
 
                 const endTime = Date.now();
                 const duration = endTime - startTime;
