@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { supabase } from '../lib/supabaseClient';
 
 const AuthContext = createContext({});
@@ -7,15 +7,60 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [role, setRole] = useState(null);
     const [loading, setLoading] = useState(true);
+    const isCheckingSession = useRef(false);
+    const abortControllerRef = useRef(null);
 
     useEffect(() => {
-        // Check active session
+        let mounted = true;
+
+        // Check active session with abort capability
         const getSession = async () => {
+            // Prevent multiple simultaneous session checks
+            if (isCheckingSession.current) {
+                console.log('Session check already in progress, skipping...');
+                return;
+            }
+
+            isCheckingSession.current = true;
+
             try {
                 console.log('Checking session...');
                 const startTime = Date.now();
 
-                const { data: { session }, error } = await supabase.auth.getSession();
+                // Create abort controller for this session check
+                abortControllerRef.current = new AbortController();
+                const signal = abortControllerRef.current.signal;
+
+                // Set timeout to abort after 30 seconds
+                const timeoutId = setTimeout(() => {
+                    if (abortControllerRef.current) {
+                        console.warn('Session check timeout after 30s - aborting request');
+                        abortControllerRef.current.abort();
+                    }
+                }, 30000);
+
+                let session = null;
+                let error = null;
+
+                try {
+                    // Note: Supabase client doesn't support AbortSignal directly,
+                    // but we can still use it to track if we should ignore the result
+                    const result = await supabase.auth.getSession();
+
+                    // Check if aborted before processing result
+                    if (signal.aborted) {
+                        console.log('Session check was aborted, ignoring result');
+                        clearTimeout(timeoutId);
+                        return;
+                    }
+
+                    session = result.data?.session;
+                    error = result.error;
+                } catch (err) {
+                    error = err;
+                } finally {
+                    clearTimeout(timeoutId);
+                }
 
                 const endTime = Date.now();
                 const duration = endTime - startTime;
@@ -24,9 +69,14 @@ export const AuthProvider = ({ children }) => {
                     console.warn(`Session check took ${duration}ms - connection may be slow`);
                 }
 
+                // Only update state if component is still mounted and not aborted
+                if (!mounted || signal.aborted) {
+                    console.log('Component unmounted or aborted, skipping state update');
+                    return;
+                }
+
                 if (error) {
                     console.error('Session check error:', error);
-                    // Don't throw, just log and continue as logged out
                     setUser(null);
                     setRole(null);
                     return;
@@ -43,13 +93,15 @@ export const AuthProvider = ({ children }) => {
                 }
             } catch (error) {
                 console.error('Error checking session:', error);
-                // If session check fails, continue as logged out user
-                // This allows the app to continue working even if session check fails
-                setUser(null);
-                setRole(null);
+                if (mounted) {
+                    setUser(null);
+                    setRole(null);
+                }
             } finally {
-                // ALWAYS set loading to false, even if there's an error
-                setLoading(false);
+                if (mounted) {
+                    setLoading(false);
+                }
+                isCheckingSession.current = false;
             }
         };
 
@@ -57,7 +109,16 @@ export const AuthProvider = ({ children }) => {
 
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+            if (!mounted) return;
+
             console.log('Auth state changed:', _event, session?.user?.email);
+
+            // Don't update state if we're currently checking session
+            if (isCheckingSession.current) {
+                console.log('Session check in progress, deferring auth state change');
+                return;
+            }
+
             setUser(session?.user ?? null);
             if (session?.user) {
                 await fetchUserRole(session.user.id);
@@ -67,7 +128,14 @@ export const AuthProvider = ({ children }) => {
             setLoading(false);
         });
 
-        return () => subscription.unsubscribe();
+        return () => {
+            mounted = false;
+            // Abort any pending session check
+            if (abortControllerRef.current) {
+                abortControllerRef.current.abort();
+            }
+            subscription.unsubscribe();
+        };
     }, []);
 
     const fetchUserRole = async (userId) => {
