@@ -15,18 +15,7 @@ export const AuthProvider = ({ children }) => {
                 console.log('Checking session...');
                 const startTime = Date.now();
 
-                // Add timeout that returns null session instead of throwing error
-                const timeoutPromise = new Promise((resolve) =>
-                    setTimeout(() => {
-                        console.warn('Session check timeout after 15s - continuing as logged out');
-                        resolve({ data: { session: null }, error: null });
-                    }, 15000)
-                );
-
-                const { data: { session }, error } = await Promise.race([
-                    supabase.auth.getSession(),
-                    timeoutPromise
-                ]);
+                const { data: { session }, error } = await supabase.auth.getSession();
 
                 const endTime = Date.now();
                 const duration = endTime - startTime;
@@ -37,7 +26,10 @@ export const AuthProvider = ({ children }) => {
 
                 if (error) {
                     console.error('Session check error:', error);
-                    throw error;
+                    // Don't throw, just log and continue as logged out
+                    setUser(null);
+                    setRole(null);
+                    return;
                 }
 
                 if (session?.user) {
@@ -65,6 +57,7 @@ export const AuthProvider = ({ children }) => {
 
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+            console.log('Auth state changed:', _event, session?.user?.email);
             setUser(session?.user ?? null);
             if (session?.user) {
                 await fetchUserRole(session.user.id);
