@@ -12,9 +12,9 @@ export const AuthProvider = ({ children }) => {
         // Check active session
         const getSession = async () => {
             try {
-                // Add timeout but allow app to continue if it fails
+                // Increase timeout to 10 seconds for slower connections
                 const timeoutPromise = new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error('Session check timed out')), 3000)
+                    setTimeout(() => reject(new Error('Session check timed out')), 10000)
                 );
 
                 const { data: { session }, error } = await Promise.race([

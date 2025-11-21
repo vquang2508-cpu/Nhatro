@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
@@ -15,12 +15,7 @@ const Detail = () => {
     const [submitting, setSubmitting] = useState(false);
     const { user } = useAuth();
 
-    useEffect(() => {
-        fetchListingDetail();
-        fetchComments();
-    }, [id]);
-
-    const fetchListingDetail = async () => {
+    const fetchListingDetail = useCallback(async () => {
         try {
             setLoading(true);
             const { data, error } = await supabase
@@ -37,9 +32,9 @@ const Detail = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
 
-    const fetchComments = async () => {
+    const fetchComments = useCallback(async () => {
         const { data } = await supabase
             .from('comments')
             .select('*')
@@ -47,11 +42,20 @@ const Detail = () => {
             .order('created_at', { ascending: false });
 
         if (data) setComments(data);
-    };
+    }, [id]);
+
+    useEffect(() => {
+        fetchListingDetail();
+        fetchComments();
+    }, [fetchListingDetail, fetchComments]);
+
 
     const handleSubmitComment = async (e) => {
         e.preventDefault();
-        if (!user) return;
+        if (!user) {
+            alert('Vui lòng đăng nhập để gửi đánh giá!');
+            return;
+        }
 
         if (rating === 0) {
             alert('Vui lòng chọn số sao đánh giá!');
@@ -69,14 +73,23 @@ const Detail = () => {
                     user_id: user.id
                 });
 
-            if (error) throw error;
+            if (error) {
+                console.error('Supabase error:', error);
+                throw error;
+            }
 
             setNewComment('');
             setRating(0);
-            fetchComments(); // Refresh comments
+            // Await fetchComments to ensure it completes
+            await fetchComments();
+            alert('Đánh giá của bạn đã được gửi!');
         } catch (err) {
             console.error('Error submitting comment:', err);
-            alert('Không thể gửi đánh giá. Vui lòng thử lại.');
+            if (err.message?.includes('rating')) {
+                alert('Lỗi: Bảng comments chưa có cột rating. Vui lòng chạy schema.sql trong Supabase!');
+            } else {
+                alert('Không thể gửi đánh giá. Vui lòng thử lại.');
+            }
         } finally {
             setSubmitting(false);
         }
