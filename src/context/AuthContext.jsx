@@ -12,25 +12,36 @@ export const AuthProvider = ({ children }) => {
         // Check active session
         const getSession = async () => {
             try {
-                // Increase timeout to 10 seconds for slower connections
-                const timeoutPromise = new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error('Session check timed out')), 10000)
-                );
+                console.log('Checking session...');
+                const startTime = Date.now();
 
-                const { data: { session }, error } = await Promise.race([
-                    supabase.auth.getSession(),
-                    timeoutPromise
-                ]);
+                const { data: { session }, error } = await supabase.auth.getSession();
 
-                if (error) throw error;
+                const endTime = Date.now();
+                const duration = endTime - startTime;
 
-                setUser(session?.user ?? null);
+                if (duration > 5000) {
+                    console.warn(`Session check took ${duration}ms - connection may be slow`);
+                }
+
+                if (error) {
+                    console.error('Session check error:', error);
+                    throw error;
+                }
+
                 if (session?.user) {
+                    console.log('Session found for user:', session.user.email);
+                    setUser(session.user);
                     await fetchUserRole(session.user.id);
+                } else {
+                    console.log('No active session found');
+                    setUser(null);
+                    setRole(null);
                 }
             } catch (error) {
                 console.error('Error checking session:', error);
                 // If session check fails, continue as logged out user
+                // This allows the app to continue working even if session check fails
                 setUser(null);
                 setRole(null);
             } finally {
