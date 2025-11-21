@@ -18,6 +18,7 @@ const Detail = () => {
     const fetchListingDetail = useCallback(async () => {
         try {
             setLoading(true);
+            setError(null); // Reset error state
             const { data, error } = await supabase
                 .from('listings')
                 .select('*')
@@ -25,28 +26,50 @@ const Detail = () => {
                 .single();
 
             if (error) throw error;
+
+            if (!data) {
+                setError('Không tìm thấy tin đăng.');
+                setListing(null);
+                return false;
+            }
+
             setListing(data);
+            return true; // Success
         } catch (err) {
             console.error('Error fetching listing:', err);
             setError('Không tìm thấy tin đăng hoặc đã bị xóa.');
+            setListing(null);
+            return false; // Failed
         } finally {
             setLoading(false);
         }
     }, [id]);
 
     const fetchComments = useCallback(async () => {
-        const { data } = await supabase
-            .from('comments')
-            .select('*')
-            .eq('listing_id', id)
-            .order('created_at', { ascending: false });
+        try {
+            const { data } = await supabase
+                .from('comments')
+                .select('*')
+                .eq('listing_id', id)
+                .order('created_at', { ascending: false });
 
-        if (data) setComments(data);
+            if (data) setComments(data);
+        } catch (err) {
+            console.error('Error fetching comments:', err);
+            // Don't show error to user, just log it
+        }
     }, [id]);
 
     useEffect(() => {
-        fetchListingDetail();
-        fetchComments();
+        const loadData = async () => {
+            const success = await fetchListingDetail();
+            // Only fetch comments if listing was found
+            if (success) {
+                await fetchComments();
+            }
+        };
+
+        loadData();
     }, [fetchListingDetail, fetchComments]);
 
 
