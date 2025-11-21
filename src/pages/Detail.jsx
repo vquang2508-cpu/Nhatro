@@ -290,17 +290,19 @@ const Detail = () => {
                                     </div>
                                 </div>
 
-                                <a
-                                    href={`tel:${listing['SĐT']}`}
-                                    className="block w-full bg-blue-600 text-white text-center py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors duration-200 shadow-md hover:shadow-lg mb-3"
-                                >
-                                    Gọi điện ngay
-                                    <div className="text-sm font-normal opacity-90">{listing['SĐT']}</div>
-                                </a>
 
-                                <button className="block w-full bg-white border border-blue-600 text-blue-600 text-center py-3 rounded-xl font-bold hover:bg-blue-50 transition-colors duration-200">
-                                    Nhắn tin Zalo
-                                </button>
+                                <div className="space-y-3">
+                                    <div className="w-full bg-blue-50 text-blue-900 text-center py-3 px-4 rounded-xl border border-blue-200">
+                                        <p className="font-bold mb-1">📞 Số điện thoại</p>
+                                        <p className="text-lg font-semibold">{listing['SĐT']}</p>
+                                    </div>
+
+                                    <div className="w-full bg-green-50 text-green-900 text-center py-3 px-4 rounded-xl border border-green-200">
+                                        <p className="font-bold mb-1">💬 Liên hệ Zalo</p>
+                                        <p className="text-lg font-semibold">{listing['SĐT']}</p>
+                                    </div>
+                                </div>
+
                             </div>
 
                             {/* Address Card */}
