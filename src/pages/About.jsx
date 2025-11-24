@@ -5,6 +5,7 @@ const About = () => {
     const teamMembers = [
         {
             name: "Nguyễn Dương An",
+            mssv: "25127260",
             email: "nguyenduongan2007@gmail.com",
             facebook: "https://www.facebook.com/an.nguyen.813337",
             role: "Developer",
@@ -12,6 +13,7 @@ const About = () => {
         },
         {
             name: "Lư Gia Linh",
+            mssv: "25127087",
             email: "711819lugialinh@gmail.com",
             facebook: "https://www.facebook.com/potatochipslover",
             role: "Developer",
@@ -19,6 +21,7 @@ const About = () => {
         },
         {
             name: "Nguyễn Phước Thọ",
+            mssv: "25127510",
             email: "ptho3214@gmail.com",
             facebook: "https://www.facebook.com/tho.phuoc.10297",
             role: "Developer",
@@ -26,6 +29,7 @@ const About = () => {
         },
         {
             name: "Vũ Quang",
+            mssv: "25127483",
             email: "91vuquang@gmail.com",
             facebook: "https://www.facebook.com/quang.vu.657734",
             role: "Developer",
@@ -33,6 +37,7 @@ const About = () => {
         },
         {
             name: "Võ Minh Triết",
+            mssv: "25127246",
             email: "vominhtriet2k7@gmail.com",
             facebook: "https://www.facebook.com/triet.vo.144690",
             role: "Developer",
@@ -148,7 +153,8 @@ const About = () => {
                                         {member.name.split(' ').pop()[0]}
                                     </div>
                                 )}
-                                <h3 className="text-lg font-bold text-slate-800 mb-2">{member.name}</h3>
+                                <h3 className="text-lg font-bold text-slate-800 mb-1">{member.name}</h3>
+                                <p className="text-sm font-semibold text-blue-600 mb-2">MSSV: {member.mssv}</p>
                                 <p className="text-sm text-slate-500 mb-4">{member.email}</p>
                                 <a
                                     href={member.facebook}
