@@ -1,177 +1,167 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient';
-import ListingCard from '../components/ListingCard';
-import LoadingSkeleton from '../components/LoadingSkeleton';
-import FilterSidebar from '../components/FilterSidebar';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
-    const [listings, setListings] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filters, setFilters] = useState({
-        minPrice: '',
-        maxPrice: '',
-        minArea: '',
-        district: '',
-        city: ''
-    });
-    const [showFilters, setShowFilters] = useState(false); // Mobile filter toggle
-
-    useEffect(() => {
-        fetchListings();
-    }, [filters]); // Refetch when filters change
-
-    const fetchListings = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-
-            let query = supabase
-                .from('listings')
-                .select('*')
-                .eq('is_visible', true)
-                .order('created_at', { ascending: false });
-
-            // Apply Filters
-            if (filters.minPrice) {
-                query = query.gte('price_num', parseInt(filters.minPrice));
-            }
-            if (filters.maxPrice) {
-                query = query.lte('price_num', parseInt(filters.maxPrice));
-            }
-            if (filters.minArea) {
-                query = query.gte('area_num', parseFloat(filters.minArea));
-            }
-            if (filters.city) {
-                query = query.eq('city', filters.city);
-            }
-            if (filters.district) {
-                query = query.ilike('address', `%${filters.district}%`);
-            }
-
-            const { data, error } = await query;
-
-            if (error) throw error;
-
-            setListings(data || []);
-        } catch (err) {
-            console.error('Error fetching listings:', err);
-            setError('Không thể tải danh sách. Vui lòng thử lại sau.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleFilterChange = (newFilters) => {
-        setFilters(newFilters);
-    };
-
-    // Client-side search (Title/Address) - applied ON TOP of database filters
-    const filteredListings = listings.filter(listing =>
-        listing.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        listing.address.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-white">
             {/* Hero Section */}
-            <section className="relative bg-gradient-to-r from-blue-600 to-blue-700 text-white py-16">
-                <div className="container-custom relative z-10">
-                    <div className="max-w-3xl mx-auto text-center">
-                        <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">
-                            Tìm Ngôi Nhà Mơ Ước
-                        </h1>
-                        <p className="text-lg text-blue-100 mb-8">
-                            Hàng ngàn phòng trọ, căn hộ giá tốt tại TP.HCM
-                        </p>
+            <section className="relative h-[600px] flex items-center justify-center text-center text-white overflow-hidden">
+                <div
+                    className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat filter blur-sm scale-105"
+                    style={{ backgroundImage: "url('https://giaoducnghe.edu.vn/wp-content/uploads/2021/10/chat-luong-phong-tro-cho-sinh-vien_giao-duc-nghe.jpg')" }}
+                >
+                    <div className="absolute inset-0 bg-black/40"></div>
+                </div>
 
-                        {/* Search Bar */}
-                        <div className="relative max-w-xl mx-auto">
-                            <input
-                                type="text"
-                                placeholder="Tìm theo tên đường, địa điểm..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full px-6 py-3 rounded-full text-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-300 shadow-lg"
-                            />
-                            <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700">
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
-                            </button>
+                <div className="relative z-10 container-custom px-4">
+                    <h1 className="text-4xl md:text-6xl font-bold mb-6 drop-shadow-lg">
+                        “Hãy tìm ngôi nhà thứ hai của bạn”
+                    </h1>
+                    <Link
+                        to="/listings"
+                        className="inline-block px-8 py-3 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                    >
+                        Khám Phá Ngay
+                    </Link>
+                </div>
+            </section>
+
+            {/* Story Section */}
+            <section className="py-16 md:py-24 bg-white">
+                <div className="container-custom">
+                    <div className="max-w-3xl mx-auto text-center">
+                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                            Kết Nối Không Gian Sống – Khởi Đầu Hành Trình Mới
+                        </h2>
+                        <div className="prose prose-lg mx-auto text-gray-600">
+                            <p className="mb-4">
+                                Chúng tôi hiểu rằng, tìm được một nơi ở ưng ý chưa bao giờ là điều dễ dàng.
+                            </p>
+                            <p className="mb-4">
+                                Là những người đã từng là sinh viên, từng chật vật với những ngày nắng gắt đi tìm phòng, từng thất vọng trước những căn trọ "treo đầu dê bán thịt chó" hay những khoản phí mập mờ... chúng tôi thấu hiểu sâu sắc nỗi vất vả của bạn. Một căn phòng trọ không chỉ là nơi để ngủ, đó là nơi bạn học tập, nghỉ ngơi và bắt đầu xây dựng tương lai.
+                            </p>
+                            <p>
+                                Đó chính là lý do <strong>Thuê Nhà TPHCM</strong> ra đời. Chúng tôi không chỉ xây dựng một website tìm kiếm, chúng tôi xây dựng giải pháp để việc thuê nhà trở nên <strong>An toàn hơn – Dễ dàng hơn – Minh bạch hơn</strong>.
+                            </p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Main Content */}
-            <section className="container-custom py-8">
-                <div className="flex flex-col lg:flex-row gap-8">
-                    {/* Sidebar (Desktop) / Toggle (Mobile) */}
-                    <div className="lg:w-1/4">
-                        <div className="lg:hidden mb-4">
-                            <button
-                                onClick={() => setShowFilters(!showFilters)}
-                                className="w-full py-2 px-4 bg-white border border-gray-300 rounded-lg shadow-sm text-gray-700 font-medium flex justify-center items-center"
-                            >
-                                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+            {/* Mission & Vision Section */}
+            <section className="py-16 bg-blue-50">
+                <div className="container-custom">
+                    <div className="grid md:grid-cols-2 gap-12 items-center">
+                        <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
+                            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-6">
+                                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                                 </svg>
-                                {showFilters ? 'Ẩn bộ lọc' : 'Hiện bộ lọc'}
-                            </button>
+                            </div>
+                            <h3 className="text-2xl font-bold text-gray-900 mb-4">Sứ Mệnh Của Chúng Tôi</h3>
+                            <p className="text-gray-600 leading-relaxed">
+                                Nhiệm vụ của chúng tôi là xóa bỏ rào cản thông tin giữa người thuê và chủ nhà. Chúng tôi cam kết mang lại một nền tảng nơi mọi thông tin về giá cả, tiện ích và hình ảnh đều trung thực, giúp các bạn sinh viên và người đi làm trẻ tìm được "ngôi nhà thứ hai" nhanh chóng nhất.
+                            </p>
                         </div>
-
-                        <div className={`lg:block ${showFilters ? 'block' : 'hidden'}`}>
-                            <FilterSidebar onFilterChange={handleFilterChange} />
+                        <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
+                            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </div>
+                            <h3 className="text-2xl font-bold text-gray-900 mb-4">Tầm Nhìn</h3>
+                            <p className="text-gray-600 leading-relaxed">
+                                Trở thành hệ sinh thái công nghệ số 1 về bất động sản cho thuê dành cho giới trẻ, nơi mà sự an toàn và tiện lợi được đặt lên hàng đầu.
+                            </p>
                         </div>
                     </div>
+                </div>
+            </section>
 
-                    {/* Listings Grid */}
-                    <div className="lg:w-3/4">
-                        <div className="mb-6 flex justify-between items-center">
-                            <h2 className="text-xl font-bold text-gray-900">
-                                Kết quả tìm kiếm
-                            </h2>
-                            <span className="text-sm text-gray-500">
-                                {filteredListings.length} tin đăng
-                            </span>
-                        </div>
-
-                        {error && (
-                            <div className="bg-red-50 text-red-700 p-4 rounded-lg mb-6">
-                                {error}
-                            </div>
-                        )}
-
-                        {loading ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {[...Array(4)].map((_, index) => (
-                                    <LoadingSkeleton key={index} />
-                                ))}
-                            </div>
-                        ) : (
-                            <>
-                                {filteredListings.length > 0 ? (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        {filteredListings.map((listing) => (
-                                            <ListingCard key={listing.id} listing={listing} />
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <div className="text-center py-12 bg-white rounded-xl shadow-sm">
-                                        <p className="text-gray-500 text-lg">Không tìm thấy phòng trọ nào phù hợp.</p>
-                                        <button
-                                            onClick={() => setFilters({ minPrice: '', maxPrice: '', minArea: '', district: '' })}
-                                            className="mt-4 text-blue-600 hover:underline"
-                                        >
-                                            Xóa bộ lọc
-                                        </button>
-                                    </div>
-                                )}
-                            </>
-                        )}
+            {/* Core Values Section */}
+            <section className="py-16 md:py-24 bg-white">
+                <div className="container-custom">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                            Chúng Tôi Có Gì Khác Biệt?
+                        </h2>
+                        <p className="text-gray-500 text-lg max-w-2xl mx-auto">
+                            Những giá trị cốt lõi giúp chúng tôi mang đến trải nghiệm tốt nhất cho bạn
+                        </p>
                     </div>
+
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        {[
+                            {
+                                title: "Minh Bạch Là Tôn Chỉ",
+                                description: "Chúng tôi nỗ lực kiểm duyệt tin đăng chặt chẽ để hạn chế tối đa tình trạng 'tin ảo', 'giá ảo'. Hình ảnh bạn thấy là hình ảnh thực tế của căn phòng.",
+                                icon: (
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                ),
+                                color: "bg-green-100 text-green-600"
+                            },
+                            {
+                                title: "Tìm Kiếm Thông Minh",
+                                description: "Hệ thống bộ lọc tối ưu giúp bạn tìm phòng theo: Gần trường đại học, gần khu văn phòng, mức giá, hay tiện ích đi kèm chỉ trong vài cú click chuột.",
+                                icon: (
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                ),
+                                color: "bg-blue-100 text-blue-600"
+                            },
+                            {
+                                title: "Cộng Đồng Văn Minh",
+                                description: "Kết nối những người thuê nhà văn minh và những chủ nhà uy tín, tạo nên môi trường sống an ninh và thân thiện.",
+                                icon: (
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                ),
+                                color: "bg-orange-100 text-orange-600"
+                            },
+                            {
+                                title: "Hỗ Trợ Tận Tâm",
+                                description: "Đội ngũ CSKH luôn sẵn sàng lắng nghe và hỗ trợ giải quyết các vấn đề phát sinh trong quá trình tìm kiếm và thuê phòng.",
+                                icon: (
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                                    </svg>
+                                ),
+                                color: "bg-red-100 text-red-600"
+                            }
+                        ].map((item, index) => (
+                            <div key={index} className="bg-gray-50 p-6 rounded-xl hover:bg-white hover:shadow-lg transition-all duration-300 border border-gray-100">
+                                <div className={`w-12 h-12 ${item.color} rounded-lg flex items-center justify-center mb-4`}>
+                                    {item.icon}
+                                </div>
+                                <h3 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h3>
+                                <p className="text-gray-600 text-sm leading-relaxed">
+                                    {item.description}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Commitment Section */}
+            <section className="py-16 bg-gradient-to-br from-blue-600 to-blue-800 text-white">
+                <div className="container-custom text-center">
+                    <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                        Cam Kết Của Chúng Tôi
+                    </h2>
+                    <p className="text-xl text-blue-100 max-w-3xl mx-auto mb-10 leading-relaxed">
+                        Chúng tôi tin rằng "An cư mới lạc nghiệp". Dù bạn là tân sinh viên bỡ ngỡ hay nhân viên văn phòng bận rộn, chúng tôi sẽ luôn đồng hành để giúp bạn tìm thấy không gian sống lý tưởng nhất với chi phí hợp lý nhất.
+                    </p>
+                    <Link
+                        to="/listings"
+                        className="inline-block px-8 py-3 bg-white text-blue-700 font-bold rounded-full hover:bg-blue-50 transition-colors duration-300 shadow-lg"
+                    >
+                        Tìm Phòng Ngay
+                    </Link>
                 </div>
             </section>
         </div>

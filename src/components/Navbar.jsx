@@ -43,47 +43,59 @@ const Navbar = () => {
 
                     {/* Desktop Menu */}
                     <div className="hidden md:flex items-center space-x-6">
+                        {/* User Greeting */}
+                        {user && (
+                            <span className="text-gray-700 font-medium">
+                                Xin chào, {getUserName()}
+                            </span>
+                        )}
+
                         <Link to="/" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">
-                            Danh sách phòng
+                            Trang chủ
                         </Link>
-                        <div className="flex items-center space-x-3 ml-4">
-                            {user ? (
-                                <>
-                                    <span className="text-gray-700 font-medium">
-                                        Xin chào, {getUserName()}
-                                    </span>
-                                    <button
-                                        onClick={handleLogout}
-                                        className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200"
-                                    >
-                                        Đăng xuất
-                                    </button>
-                                    {isAdmin && (
-                                        <Link
-                                            to="/admin"
-                                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-sm hover:shadow-md"
-                                        >
-                                            Quản lý
-                                        </Link>
-                                    )}
-                                </>
-                            ) : (
-                                <>
-                                    <Link
-                                        to="/login"
-                                        className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200"
-                                    >
-                                        Đăng nhập
-                                    </Link>
-                                    <Link
-                                        to="/register"
-                                        className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200"
-                                    >
-                                        Đăng ký
-                                    </Link>
-                                </>
-                            )}
-                        </div>
+
+                        <Link to="/listings" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">
+                            Danh sách trọ
+                        </Link>
+
+                        {/* User Links */}
+                        {user && (
+                            <Link to="/my-listings" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">
+                                Tin của tôi
+                            </Link>
+                        )}
+
+                        {/* About Us */}
+                        <Link to="/about" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">
+                            About Us
+                        </Link>
+
+                        {/* Auth Buttons */}
+                        {user ? (
+                            <button
+                                onClick={handleLogout}
+                                className="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200"
+                            >
+                                Đăng xuất
+                            </button>
+                        ) : (
+                            <Link
+                                to="/login"
+                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-sm hover:shadow-md"
+                            >
+                                Đăng nhập
+                            </Link>
+                        )}
+
+                        {/* Admin Link (Only for Admin) */}
+                        {user && isAdmin && (
+                            <Link
+                                to="/admin"
+                                className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors duration-200 font-medium shadow-sm hover:shadow-md"
+                            >
+                                Quản lý
+                            </Link>
+                        )}
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -105,31 +117,60 @@ const Navbar = () => {
                 {isMenuOpen && (
                     <div className="md:hidden py-4 border-t border-gray-100 animate-fadeIn">
                         <div className="flex flex-col space-y-3">
+                            {user && (
+                                <div className="px-4 py-2 text-gray-700 font-medium">
+                                    Xin chào, {getUserName()}
+                                </div>
+                            )}
+
                             <Link
                                 to="/"
                                 className="px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors duration-200"
                                 onClick={() => setIsMenuOpen(false)}
                             >
-                                Danh sách phòng
+                                Trang chủ
                             </Link>
+                            <Link
+                                to="/listings"
+                                className="px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors duration-200"
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                Danh sách trọ
+                            </Link>
+
+                            {user && (
+                                <Link
+                                    to="/my-listings"
+                                    className="px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors duration-200"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    Tin của tôi
+                                </Link>
+                            )}
+
+                            <Link
+                                to="/about"
+                                className="px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors duration-200"
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                About Us
+                            </Link>
+
                             {user ? (
                                 <>
-                                    <div className="px-4 py-2 text-gray-700 font-medium">
-                                        Xin chào, {getUserName()}
-                                    </div>
                                     <button
                                         onClick={() => {
                                             handleLogout();
                                             setIsMenuOpen(false);
                                         }}
-                                        className="px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors duration-200 text-left"
+                                        className="px-4 py-2 text-left text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors duration-200"
                                     >
                                         Đăng xuất
                                     </button>
                                     {isAdmin && (
                                         <Link
                                             to="/admin"
-                                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium text-center"
+                                            className="px-4 py-2 text-left text-gray-800 font-bold hover:bg-gray-100 rounded-lg transition-colors duration-200"
                                             onClick={() => setIsMenuOpen(false)}
                                         >
                                             Quản lý
@@ -137,22 +178,13 @@ const Navbar = () => {
                                     )}
                                 </>
                             ) : (
-                                <>
-                                    <Link
-                                        to="/login"
-                                        className="px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors duration-200"
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
-                                        Đăng nhập
-                                    </Link>
-                                    <Link
-                                        to="/register"
-                                        className="px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors duration-200"
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
-                                        Đăng ký
-                                    </Link>
-                                </>
+                                <Link
+                                    to="/login"
+                                    className="px-4 py-2 text-blue-600 font-medium hover:bg-blue-50 rounded-lg transition-colors duration-200"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    Đăng nhập
+                                </Link>
                             )}
                         </div>
                     </div>

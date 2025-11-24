@@ -23,7 +23,7 @@ const Detail = () => {
     const [newComment, setNewComment] = useState('');
     const [rating, setRating] = useState(0);
     const [submitting, setSubmitting] = useState(false);
-    const { user } = useAuth();
+    const { user, isAdmin } = useAuth();
 
     const fetchListingDetail = useCallback(async () => {
         try {
@@ -40,6 +40,14 @@ const Detail = () => {
                 setListing(null);
                 return false;
             }
+
+            // Check visibility
+            if (!data.is_visible && !isAdmin) {
+                setError('Tin đăng này đã bị ẩn.');
+                setListing(null);
+                return false;
+            }
+
             setListing(data);
             return true;
         } catch (err) {
@@ -50,20 +58,40 @@ const Detail = () => {
         } finally {
             setLoading(false);
         }
-    }, [id]);
+    }, [id, isAdmin]);
 
     const fetchComments = useCallback(async () => {
         try {
-            const { data } = await supabase
+            // Try fetching with profiles first
+            const { data, error } = await supabase
                 .from('comments')
-                .select('*')
+                .select('*, profiles(full_name, email)')
                 .eq('listing_id', id)
                 .order('created_at', { ascending: false });
+
+            if (error) throw error;
             if (data) setComments(data);
         } catch (err) {
-            console.error('Error fetching comments:', err);
+            console.error('Error fetching comments with profiles:', err);
+            // Fallback: Fetch comments without profiles
+            try {
+                const { data, error } = await supabase
+                    .from('comments')
+                    .select('*')
+                    .eq('listing_id', id)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+                if (data) setComments(data);
+            } catch (fallbackErr) {
+                console.error('Error fetching comments (fallback):', fallbackErr);
+            }
         }
     }, [id]);
+
+    // ... (rest of the file)
+
+
 
     useEffect(() => {
         const loadData = async () => {
@@ -110,6 +138,26 @@ const Detail = () => {
             }
         } finally {
             setSubmitting(false);
+        }
+    };
+
+    const handleDeleteComment = async (commentId) => {
+        if (!window.confirm('Bạn có chắc chắn muốn xóa bình luận này?')) return;
+
+        try {
+            const { error } = await supabase
+                .from('comments')
+                .delete()
+                .eq('id', commentId);
+
+            if (error) throw error;
+
+            // Refresh comments
+            await fetchComments();
+            alert('Đã xóa bình luận.');
+        } catch (err) {
+            console.error('Error deleting comment:', err);
+            alert('Không thể xóa bình luận. Vui lòng thử lại.');
         }
     };
 
@@ -232,24 +280,36 @@ const Detail = () => {
                             {comments.length > 0 ? (
                                 <div className="space-y-6">
                                     {comments.map((comment) => (
-                                        <div key={comment.id} className="flex space-x-4 pb-6 border-b border-gray-100 last:border-0 last:pb-0">
+                                        <div key={comment.id} className="flex space-x-4 pb-6 border-b border-gray-100 last:border-0 last:pb-0 group">
                                             <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
                                                 {comment.user_id ? 'U' : 'A'}
                                             </div>
                                             <div className="flex-1">
                                                 <div className="flex items-center justify-between mb-1">
                                                     <div className="flex items-center">
-                                                        <span className="font-semibold text-gray-900 mr-2">Người dùng</span>
+                                                        <span className="font-semibold text-gray-900 mr-2">
+                                                            {comment.profiles?.full_name || comment.profiles?.email?.split('@')[0] || 'Người dùng'}
+                                                        </span>
                                                         <span className="text-xs text-gray-500">
                                                             {new Date(comment.created_at || Date.now()).toLocaleDateString('vi-VN')}
                                                         </span>
                                                     </div>
-                                                    <div className="flex text-yellow-400">
-                                                        {[...Array(5)].map((_, i) => (
-                                                            <svg key={i} className={`w-4 h-4 ${i < (comment.rating || 0) ? 'fill-current' : 'text-gray-300'}`} viewBox="0 0 20 20" fill="currentColor">
-                                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 0 00.951-.69l1.07-3.292z" />
-                                                            </svg>
-                                                        ))}
+                                                    <div className="flex items-center space-x-2">
+                                                        <div className="flex text-yellow-400">
+                                                            {[...Array(5)].map((_, i) => (
+                                                                <svg key={i} className={`w-4 h-4 ${i < (comment.rating || 0) ? 'fill-current' : 'text-gray-300'}`} viewBox="0 0 20 20" fill="currentColor">
+                                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 0 00.951-.69l1.07-3.292z" />
+                                                                </svg>
+                                                            ))}
+                                                        </div>
+                                                        {isAdmin && (
+                                                            <button
+                                                                onClick={() => handleDeleteComment(comment.id)}
+                                                                className="text-red-500 hover:text-red-700 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                                            >
+                                                                Xóa
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </div>
                                                 <p className="text-gray-700">{comment.content}</p>
