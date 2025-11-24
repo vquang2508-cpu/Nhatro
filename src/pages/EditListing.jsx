@@ -125,8 +125,7 @@ const EditListing = () => {
                 image_0: images,
                 'Tên chủ': formData.contact_name,
                 'SĐT': formData.contact_phone,
-                is_visible: false, // Reset to hidden on update
-                updated_at: new Date().toISOString()
+                is_visible: false // Reset to hidden on update
             };
 
             const { error } = await supabase
@@ -140,7 +139,7 @@ const EditListing = () => {
             navigate('/my-listings');
         } catch (error) {
             console.error('Error updating listing:', error);
-            alert('Có lỗi xảy ra khi cập nhật. Vui lòng thử lại.');
+            alert(`Có lỗi xảy ra khi cập nhật: ${error.message || JSON.stringify(error)}`);
         } finally {
             setSubmitting(false);
         }
