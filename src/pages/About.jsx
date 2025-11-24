@@ -7,31 +7,36 @@ const About = () => {
             name: "Nguyễn Dương An",
             email: "nguyenduongan2007@gmail.com",
             facebook: "https://www.facebook.com/an.nguyen.813337",
-            role: "Developer"
+            role: "Developer",
+            image: "https://media.discordapp.net/attachments/1425092456533459112/1442556550735724775/04072a389dbf009f526b95bc4d6d2813.png?ex=6925dcfb&is=69248b7b&hm=800e46232375c6706e8e2f00cafed6992b8868a49759a3cf4ef4b3aba29160c3&=&format=webp&quality=lossless"
         },
         {
             name: "Lư Gia Linh",
             email: "711819lugialinh@gmail.com",
             facebook: "https://www.facebook.com/potatochipslover",
-            role: "Developer"
+            role: "Developer",
+            image: "https://media.discordapp.net/attachments/1425092456533459112/1442554119167545374/516383077_1536344640662284_5961486254025736101_n.png?ex=6925dab7&is=69248937&hm=ff394a266e2623be48e0818d3267f0ec016b75e7d580b9ad0dbf657718bc99bc&=&format=webp&quality=lossless"
         },
         {
             name: "Nguyễn Phước Thọ",
             email: "ptho3214@gmail.com",
             facebook: "https://www.facebook.com/tho.phuoc.10297",
-            role: "Developer"
+            role: "Developer",
+            image: "https://media.discordapp.net/attachments/1425092456533459112/1442554718206296074/20250103_1031551.jpg?ex=6925db46&is=692489c6&hm=e908c871480bd9d80dab86afd8776862b28b0c7c1a24c588853414d931a8dff8&=&format=webp"
         },
         {
             name: "Vũ Quang",
             email: "91vuquang@gmail.com",
             facebook: "https://www.facebook.com/quang.vu.657734",
-            role: "Developer"
+            role: "Developer",
+            image: "https://scontent.fsgn5-5.fna.fbcdn.net/v/t1.6435-9/123725209_118323726745299_6682006222652791081_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=0O4-aFHRzJUQ7kNvwGi1_R5&_nc_oc=AdlFlk-5xe_zZkxi2ZnLYVPQzuxjooGUSB5DnR8Syi4nkGKf8JqdyIXW88YqU9vRbYs&_nc_zt=23&_nc_ht=scontent.fsgn5-5.fna&_nc_gid=xDu-5Xgf5zXhZ6JPC_1uDg&oh=00_AfhHPQMenHLcg1moAyO0NNcWJayINwz3nUl7wOwLJvMMyA&oe=694BEA1B"
         },
         {
             name: "Võ Minh Triết",
             email: "vominhtriet2k7@gmail.com",
             facebook: "https://www.facebook.com/triet.vo.144690",
-            role: "Developer"
+            role: "Developer",
+            image: "https://media.discordapp.net/attachments/1425092456533459112/1442562253625757796/70a50cf9-462b-4410-9b5d-1ad2f6acf44e.png?ex=6925e24a&is=692490ca&hm=e6857652f74c9eacc37f6393d712e27ed4d525935f2cb15272c5f0d1cbacc85e&=&format=webp&quality=lossless&width=720&height=960"
         }
     ];
 
@@ -130,9 +135,19 @@ const About = () => {
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
                         {teamMembers.map((member, index) => (
                             <div key={index} className="bg-slate-50 rounded-xl p-6 text-center hover:shadow-md transition-shadow">
-                                <div className="w-20 h-20 bg-slate-200 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-bold text-slate-500">
-                                    {member.name.split(' ').pop()[0]}
-                                </div>
+                                {member.image ? (
+                                    <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden border-4 border-slate-200">
+                                        <img
+                                            src={member.image}
+                                            alt={member.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="w-32 h-32 bg-slate-200 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl font-bold text-slate-500">
+                                        {member.name.split(' ').pop()[0]}
+                                    </div>
+                                )}
                                 <h3 className="text-lg font-bold text-slate-800 mb-2">{member.name}</h3>
                                 <p className="text-sm text-slate-500 mb-4">{member.email}</p>
                                 <a
