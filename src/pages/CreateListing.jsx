@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
+import ImageUpload from '../components/ImageUpload';
 
 const CreateListing = () => {
     const { user } = useAuth();
@@ -219,43 +220,28 @@ const CreateListing = () => {
                                 ></textarea>
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Link hình ảnh (URL) *</label>
-                                <div className="space-y-2">
-                                    <input
-                                        type="text"
-                                        name="image_0"
-                                        required
-                                        value={formData.image_0}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                                        placeholder="Link hình ảnh chính..."
-                                    />
-                                    <input
-                                        type="text"
-                                        name="image_1"
-                                        value={formData.image_1}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                                        placeholder="Link hình ảnh phụ 1..."
-                                    />
-                                    <input
-                                        type="text"
-                                        name="image_2"
-                                        value={formData.image_2}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                                        placeholder="Link hình ảnh phụ 2..."
-                                    />
-                                    <input
-                                        type="text"
-                                        name="image_3"
-                                        value={formData.image_3}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                                        placeholder="Link hình ảnh phụ 3..."
-                                    />
-                                </div>
+                            <div className="space-y-4">
+                                <ImageUpload
+                                    label="Hình ảnh chính"
+                                    value={formData.image_0}
+                                    onChange={(url) => setFormData(prev => ({ ...prev, image_0: url }))}
+                                    required
+                                />
+                                <ImageUpload
+                                    label="Hình ảnh phụ 1"
+                                    value={formData.image_1}
+                                    onChange={(url) => setFormData(prev => ({ ...prev, image_1: url }))}
+                                />
+                                <ImageUpload
+                                    label="Hình ảnh phụ 2"
+                                    value={formData.image_2}
+                                    onChange={(url) => setFormData(prev => ({ ...prev, image_2: url }))}
+                                />
+                                <ImageUpload
+                                    label="Hình ảnh phụ 3"
+                                    value={formData.image_3}
+                                    onChange={(url) => setFormData(prev => ({ ...prev, image_3: url }))}
+                                />
                             </div>
                         </div>
 
