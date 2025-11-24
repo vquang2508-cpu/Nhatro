@@ -17,10 +17,16 @@ const Listings = () => {
         city: ''
     });
     const [showFilters, setShowFilters] = useState(false); // Mobile filter toggle
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 12; // Number of listings per page
 
     useEffect(() => {
         fetchListings();
     }, [filters]); // Refetch when filters change
+
+    useEffect(() => {
+        setCurrentPage(1); // Reset to page 1 when filters or search change
+    }, [filters, searchTerm]);
 
     const fetchListings = async () => {
         try {
@@ -72,6 +78,53 @@ const Listings = () => {
         listing.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         listing.address.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    // Pagination logic
+    const totalPages = Math.ceil(filteredListings.length / itemsPerPage);
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentListings = filteredListings.slice(indexOfFirstItem, indexOfLastItem);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // Generate page numbers for pagination
+    const getPageNumbers = () => {
+        const pageNumbers = [];
+        const maxPagesToShow = 5;
+
+        if (totalPages <= maxPagesToShow) {
+            for (let i = 1; i <= totalPages; i++) {
+                pageNumbers.push(i);
+            }
+        } else {
+            if (currentPage <= 3) {
+                for (let i = 1; i <= 4; i++) {
+                    pageNumbers.push(i);
+                }
+                pageNumbers.push('...');
+                pageNumbers.push(totalPages);
+            } else if (currentPage >= totalPages - 2) {
+                pageNumbers.push(1);
+                pageNumbers.push('...');
+                for (let i = totalPages - 3; i <= totalPages; i++) {
+                    pageNumbers.push(i);
+                }
+            } else {
+                pageNumbers.push(1);
+                pageNumbers.push('...');
+                for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+                    pageNumbers.push(i);
+                }
+                pageNumbers.push('...');
+                pageNumbers.push(totalPages);
+            }
+        }
+
+        return pageNumbers;
+    };
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -153,16 +206,67 @@ const Listings = () => {
                         ) : (
                             <>
                                 {filteredListings.length > 0 ? (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        {filteredListings.map((listing) => (
-                                            <ListingCard key={listing.id} listing={listing} />
-                                        ))}
-                                    </div>
+                                    <>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            {currentListings.map((listing) => (
+                                                <ListingCard key={listing.id} listing={listing} />
+                                            ))}
+                                        </div>
+
+                                        {/* Pagination */}
+                                        {totalPages > 1 && (
+                                            <div className="mt-8 flex justify-center items-center gap-2">
+                                                {/* Previous Button */}
+                                                <button
+                                                    onClick={() => handlePageChange(currentPage - 1)}
+                                                    disabled={currentPage === 1}
+                                                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${currentPage === 1
+                                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                                            : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 border border-gray-300'
+                                                        }`}
+                                                >
+                                                    ← Trước
+                                                </button>
+
+                                                {/* Page Numbers */}
+                                                {getPageNumbers().map((pageNum, index) => (
+                                                    pageNum === '...' ? (
+                                                        <span key={`ellipsis-${index}`} className="px-3 py-2 text-gray-500">
+                                                            ...
+                                                        </span>
+                                                    ) : (
+                                                        <button
+                                                            key={pageNum}
+                                                            onClick={() => handlePageChange(pageNum)}
+                                                            className={`px-4 py-2 rounded-lg font-medium transition-colors ${currentPage === pageNum
+                                                                    ? 'bg-blue-600 text-white'
+                                                                    : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 border border-gray-300'
+                                                                }`}
+                                                        >
+                                                            {pageNum}
+                                                        </button>
+                                                    )
+                                                ))}
+
+                                                {/* Next Button */}
+                                                <button
+                                                    onClick={() => handlePageChange(currentPage + 1)}
+                                                    disabled={currentPage === totalPages}
+                                                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${currentPage === totalPages
+                                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                                            : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 border border-gray-300'
+                                                        }`}
+                                                >
+                                                    Sau →
+                                                </button>
+                                            </div>
+                                        )}
+                                    </>
                                 ) : (
                                     <div className="text-center py-12 bg-white rounded-xl shadow-sm">
                                         <p className="text-gray-500 text-lg">Không tìm thấy phòng trọ nào phù hợp.</p>
                                         <button
-                                            onClick={() => setFilters({ minPrice: '', maxPrice: '', minArea: '', district: '' })}
+                                            onClick={() => setFilters({ minPrice: '', maxPrice: '', minArea: '', district: '', city: '' })}
                                             className="mt-4 text-blue-600 hover:underline"
                                         >
                                             Xóa bộ lọc
