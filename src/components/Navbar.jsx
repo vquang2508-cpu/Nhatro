@@ -37,7 +37,7 @@ const Navbar = () => {
                             </svg>
                         </div>
                         <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
-                            Thuê Nhà TPHCM
+                            Trọ đâu cũng được
                         </span>
                     </Link>
 
@@ -64,6 +64,11 @@ const Navbar = () => {
                                 Tin của tôi
                             </Link>
                         )}
+
+                        {/* Support Link */}
+                        <Link to="/support" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">
+                            Hỗ trợ
+                        </Link>
 
                         {/* About Us */}
                         <Link to="/about" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">

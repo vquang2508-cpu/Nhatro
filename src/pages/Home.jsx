@@ -1,10 +1,39 @@
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabaseClient';
+import ListingCard from '../components/ListingCard';
+import LoadingSkeleton from '../components/LoadingSkeleton';
 
 const Home = () => {
+    const [latestListings, setLatestListings] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchLatestListings();
+    }, []);
+
+    const fetchLatestListings = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('listings')
+                .select('*')
+                .eq('is_visible', true)
+                .order('created_at', { ascending: false })
+                .limit(3);
+
+            if (error) throw error;
+            setLatestListings(data || []);
+        } catch (error) {
+            console.error('Error fetching latest listings:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-white">
             {/* Hero Section */}
-            <section className="relative h-[600px] flex items-center justify-center text-center text-white overflow-hidden">
+            <section className="relative h-[500px] flex items-center justify-center text-center text-white overflow-hidden">
                 <div
                     className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat filter blur-sm scale-105"
                     style={{ backgroundImage: "url('https://giaoducnghe.edu.vn/wp-content/uploads/2021/10/chat-luong-phong-tro-cho-sinh-vien_giao-duc-nghe.jpg')" }}
@@ -25,11 +54,43 @@ const Home = () => {
                 </div>
             </section>
 
+            {/* Blog / Latest Listings Section */}
+            <section className="py-12 bg-gray-50">
+                <div className="container-custom">
+                    <div className="flex justify-between items-end mb-8">
+                        <div>
+                            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Phòng Trọ Mới Nhất</h2>
+                            <p className="text-gray-600 mt-2">Những lựa chọn tốt nhất vừa được cập nhật</p>
+                        </div>
+                        <Link to="/listings" className="text-blue-600 hover:text-blue-700 font-medium flex items-center">
+                            Xem tất cả
+                            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                        </Link>
+                    </div>
+
+                    {loading ? (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {[...Array(3)].map((_, index) => (
+                                <LoadingSkeleton key={index} />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {latestListings.map((listing) => (
+                                <ListingCard key={listing.id} listing={listing} />
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </section>
+
             {/* Story Section */}
-            <section className="py-16 md:py-24 bg-white">
+            <section className="py-12 bg-white">
                 <div className="container-custom">
                     <div className="max-w-3xl mx-auto text-center">
-                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
                             Kết Nối Không Gian Sống – Khởi Đầu Hành Trình Mới
                         </h2>
                         <div className="prose prose-lg mx-auto text-gray-600">
@@ -40,7 +101,7 @@ const Home = () => {
                                 Là những người đã từng là sinh viên, từng chật vật với những ngày nắng gắt đi tìm phòng, từng thất vọng trước những căn trọ "treo đầu dê bán thịt chó" hay những khoản phí mập mờ... chúng tôi thấu hiểu sâu sắc nỗi vất vả của bạn. Một căn phòng trọ không chỉ là nơi để ngủ, đó là nơi bạn học tập, nghỉ ngơi và bắt đầu xây dựng tương lai.
                             </p>
                             <p>
-                                Đó chính là lý do <strong>Thuê Nhà TPHCM</strong> ra đời. Chúng tôi không chỉ xây dựng một website tìm kiếm, chúng tôi xây dựng giải pháp để việc thuê nhà trở nên <strong>An toàn hơn – Dễ dàng hơn – Minh bạch hơn</strong>.
+                                Đó chính là lý do <strong>Trọ đâu cũng được</strong> ra đời. Chúng tôi không chỉ xây dựng một website tìm kiếm, chúng tôi xây dựng giải pháp để việc thuê nhà trở nên <strong>An toàn hơn – Dễ dàng hơn – Minh bạch hơn</strong>.
                             </p>
                         </div>
                     </div>
@@ -48,28 +109,28 @@ const Home = () => {
             </section>
 
             {/* Mission & Vision Section */}
-            <section className="py-16 bg-blue-50">
+            <section className="py-12 bg-blue-50">
                 <div className="container-custom">
-                    <div className="grid md:grid-cols-2 gap-12 items-center">
-                        <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
-                            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-6">
+                    <div className="grid md:grid-cols-2 gap-8 items-center">
+                        <div className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
+                            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
                                 <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                                 </svg>
                             </div>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-4">Sứ Mệnh Của Chúng Tôi</h3>
+                            <h3 className="text-xl font-bold text-gray-900 mb-3">Sứ Mệnh Của Chúng Tôi</h3>
                             <p className="text-gray-600 leading-relaxed">
                                 Nhiệm vụ của chúng tôi là xóa bỏ rào cản thông tin giữa người thuê và chủ nhà. Chúng tôi cam kết mang lại một nền tảng nơi mọi thông tin về giá cả, tiện ích và hình ảnh đều trung thực, giúp các bạn sinh viên và người đi làm trẻ tìm được "ngôi nhà thứ hai" nhanh chóng nhất.
                             </p>
                         </div>
-                        <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
-                            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-6">
+                        <div className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300">
+                            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
                                 <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                 </svg>
                             </div>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-4">Tầm Nhìn</h3>
+                            <h3 className="text-xl font-bold text-gray-900 mb-3">Tầm Nhìn</h3>
                             <p className="text-gray-600 leading-relaxed">
                                 Trở thành hệ sinh thái công nghệ số 1 về bất động sản cho thuê dành cho giới trẻ, nơi mà sự an toàn và tiện lợi được đặt lên hàng đầu.
                             </p>
@@ -79,10 +140,10 @@ const Home = () => {
             </section>
 
             {/* Core Values Section */}
-            <section className="py-16 md:py-24 bg-white">
+            <section className="py-12 bg-white">
                 <div className="container-custom">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    <div className="text-center mb-10">
+                        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
                             Chúng Tôi Có Gì Khác Biệt?
                         </h2>
                         <p className="text-gray-500 text-lg max-w-2xl mx-auto">
@@ -90,7 +151,7 @@ const Home = () => {
                         </p>
                     </div>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {[
                             {
                                 title: "Minh Bạch Là Tôn Chỉ",
@@ -137,7 +198,7 @@ const Home = () => {
                                 <div className={`w-12 h-12 ${item.color} rounded-lg flex items-center justify-center mb-4`}>
                                     {item.icon}
                                 </div>
-                                <h3 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h3>
+                                <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
                                 <p className="text-gray-600 text-sm leading-relaxed">
                                     {item.description}
                                 </p>
@@ -150,10 +211,10 @@ const Home = () => {
             {/* Commitment Section */}
             <section className="py-16 bg-gradient-to-br from-blue-600 to-blue-800 text-white">
                 <div className="container-custom text-center">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                    <h2 className="text-2xl md:text-3xl font-bold mb-4">
                         Cam Kết Của Chúng Tôi
                     </h2>
-                    <p className="text-xl text-blue-100 max-w-3xl mx-auto mb-10 leading-relaxed">
+                    <p className="text-lg text-blue-100 max-w-3xl mx-auto mb-8 leading-relaxed">
                         Chúng tôi tin rằng "An cư mới lạc nghiệp". Dù bạn là tân sinh viên bỡ ngỡ hay nhân viên văn phòng bận rộn, chúng tôi sẽ luôn đồng hành để giúp bạn tìm thấy không gian sống lý tưởng nhất với chi phí hợp lý nhất.
                     </p>
                     <Link

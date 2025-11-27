@@ -48,6 +48,32 @@ const AdminDashboard = () => {
         }
     };
 
+    const deleteListing = async (id, title) => {
+        // Confirmation dialog
+        const confirmed = window.confirm(
+            `Bạn có chắc chắn muốn xóa tin đăng này?\n\n"${title}"\n\nHành động này không thể hoàn tác!`
+        );
+
+        if (!confirmed) return;
+
+        try {
+            const { error } = await supabase
+                .from('listings')
+                .delete()
+                .eq('id', id);
+
+            if (error) throw error;
+
+            // Update local state - remove deleted item
+            setListings(listings.filter(item => item.id !== id));
+
+            alert('Đã xóa tin đăng thành công!');
+        } catch (error) {
+            console.error('Error deleting listing:', error);
+            alert('Có lỗi xảy ra khi xóa tin đăng. Vui lòng thử lại.');
+        }
+    };
+
     const getThumbnail = (imageString) => {
         if (!imageString) return 'https://via.placeholder.com/100?text=No+Image';
         return imageString.split('\n')[0].trim();
@@ -153,13 +179,19 @@ const AdminDashboard = () => {
                                                         {listing.is_visible ? 'Đang hiện' : 'Đã ẩn'}
                                                     </span>
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
                                                     <button
                                                         onClick={() => toggleVisibility(listing.id, listing.is_visible)}
-                                                        className={`text-indigo-600 hover:text-indigo-900 font-medium ${listing.is_visible ? 'text-red-600 hover:text-red-900' : 'text-green-600 hover:text-green-900'
+                                                        className={`font-medium ${listing.is_visible ? 'text-orange-600 hover:text-orange-900' : 'text-green-600 hover:text-green-900'
                                                             }`}
                                                     >
                                                         {listing.is_visible ? 'Ẩn tin' : 'Hiện tin'}
+                                                    </button>
+                                                    <button
+                                                        onClick={() => deleteListing(listing.id, listing.title)}
+                                                        className="text-red-600 hover:text-red-900 font-medium"
+                                                    >
+                                                        Xóa
                                                     </button>
                                                 </td>
                                             </tr>

@@ -221,7 +221,7 @@ const About = () => {
             <footer className="bg-slate-950 text-slate-400 py-12 border-t border-slate-900">
                 <div className="container mx-auto px-4 text-center">
                     <p className="mb-6 text-lg">
-                        Chúng tôi xin gửi lời cảm ơn chân thành đến Giảng viên <span className="text-white font-semibold">Lê Nguyễn Tường Nhi</span> và <span className="text-white font-semibold">Huỳnh Thụy Bảo Trân</span> đã tận tình hướng dẫn chúng em.
+                        Chúng em xin gửi lời cảm ơn chân thành đến Giảng viên <span className="text-white font-semibold">Lê Nguyễn Tường Nhi</span> và <span className="text-white font-semibold">Huỳnh Thụy Bảo Trân</span> đã tận tình hướng dẫn chúng em.
                     </p>
                     <div className="flex flex-col items-center justify-center space-y-2">
                         <h4 className="text-white font-bold mb-2">Liên hệ:</h4>
