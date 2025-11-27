@@ -53,6 +53,7 @@ const Listings = () => {
                 query = query.eq('city', filters.city);
             }
             if (filters.district) {
+                // Use broader pattern in database, exact matching is done client-side
                 query = query.ilike('address', `%${filters.district}%`);
             }
 
@@ -74,10 +75,25 @@ const Listings = () => {
     };
 
     // Client-side search (Title/Address) - applied ON TOP of database filters
-    const filteredListings = listings.filter(listing =>
-        listing.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        listing.address.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredListings = listings.filter(listing => {
+        // Text search filter
+        const matchesSearch = listing.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            listing.address.toLowerCase().includes(searchTerm.toLowerCase());
+
+        // District filter with exact matching to prevent "Quận 1" from matching "Quận 10", etc.
+        let matchesDistrict = true;
+        if (filters.district) {
+            const addressLower = listing.address.toLowerCase();
+            const districtLower = filters.district.toLowerCase();
+
+            // Use word boundary regex to ensure exact district match
+            // This pattern matches the district followed by a space, comma, period, or end of string
+            const districtRegex = new RegExp(`\\b${districtLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:\\s|,|\\.|$)`, 'i');
+            matchesDistrict = districtRegex.test(addressLower);
+        }
+
+        return matchesSearch && matchesDistrict;
+    });
 
     // Pagination logic
     const totalPages = Math.ceil(filteredListings.length / itemsPerPage);
@@ -221,8 +237,8 @@ const Listings = () => {
                                                     onClick={() => handlePageChange(currentPage - 1)}
                                                     disabled={currentPage === 1}
                                                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${currentPage === 1
-                                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                                            : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 border border-gray-300'
+                                                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                                        : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 border border-gray-300'
                                                         }`}
                                                 >
                                                     ← Trước
@@ -239,8 +255,8 @@ const Listings = () => {
                                                             key={pageNum}
                                                             onClick={() => handlePageChange(pageNum)}
                                                             className={`px-4 py-2 rounded-lg font-medium transition-colors ${currentPage === pageNum
-                                                                    ? 'bg-blue-600 text-white'
-                                                                    : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 border border-gray-300'
+                                                                ? 'bg-blue-600 text-white'
+                                                                : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 border border-gray-300'
                                                                 }`}
                                                         >
                                                             {pageNum}
@@ -253,8 +269,8 @@ const Listings = () => {
                                                     onClick={() => handlePageChange(currentPage + 1)}
                                                     disabled={currentPage === totalPages}
                                                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${currentPage === totalPages
-                                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                                            : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 border border-gray-300'
+                                                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                                        : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 border border-gray-300'
                                                         }`}
                                                 >
                                                     Sau →

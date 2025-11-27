@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
 import LoadingSkeleton from '../components/LoadingSkeleton';
+import ListingCard from '../components/ListingCard';
 
 const Detail = () => {
     const { id } = useParams();
@@ -23,6 +24,8 @@ const Detail = () => {
     const [newComment, setNewComment] = useState('');
     const [rating, setRating] = useState(0);
     const [submitting, setSubmitting] = useState(false);
+    const [nearbyListings, setNearbyListings] = useState([]);
+    const [loadingNearby, setLoadingNearby] = useState(false);
     const { user, isAdmin } = useAuth();
 
     const fetchListingDetail = useCallback(async () => {
@@ -89,6 +92,59 @@ const Detail = () => {
         }
     }, [id]);
 
+    const fetchNearbyListings = useCallback(async (currentListing) => {
+        if (!currentListing) return;
+
+        try {
+            setLoadingNearby(true);
+
+            // Extract district from address
+            const addressLower = currentListing.address?.toLowerCase() || '';
+            let district = null;
+
+            // Try to find district in address
+            const districtPatterns = [
+                'quận 1', 'quận 3', 'quận 4', 'quận 5', 'quận 6', 'quận 7', 'quận 8', 'quận 10', 'quận 11', 'quận 12',
+                'bình thạnh', 'gò vấp', 'phú nhuận', 'tân bình', 'tân phú', 'bình tân', 'thủ đức', 'nhà bè', 'hóc môn', 'củ chi', 'bình chánh', 'cần giờ'
+            ];
+
+            for (const pattern of districtPatterns) {
+                if (addressLower.includes(pattern)) {
+                    district = pattern;
+                    break;
+                }
+            }
+
+            let query = supabase
+                .from('listings')
+                .select('*')
+                .eq('is_visible', true)
+                .neq('id', currentListing.id) // Exclude current listing
+                .limit(6);
+
+            // Filter by city if available
+            if (currentListing.city) {
+                query = query.eq('city', currentListing.city);
+            }
+
+            // Filter by district if found
+            if (district) {
+                query = query.ilike('address', `%${district}%`);
+            }
+
+            const { data, error } = await query;
+
+            if (error) throw error;
+
+            setNearbyListings(data || []);
+        } catch (err) {
+            console.error('Error fetching nearby listings:', err);
+            setNearbyListings([]);
+        } finally {
+            setLoadingNearby(false);
+        }
+    }, []);
+
     // ... (rest of the file)
 
 
@@ -96,10 +152,19 @@ const Detail = () => {
     useEffect(() => {
         const loadData = async () => {
             const success = await fetchListingDetail();
-            if (success) await fetchComments();
+            if (success) {
+                await fetchComments();
+            }
         };
         loadData();
     }, [fetchListingDetail, fetchComments]);
+
+    // Fetch nearby listings when listing is loaded
+    useEffect(() => {
+        if (listing) {
+            fetchNearbyListings(listing);
+        }
+    }, [listing, fetchNearbyListings]);
 
     const handleSubmitComment = async (e) => {
         e.preventDefault();
@@ -362,6 +427,26 @@ const Detail = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* Nearby Rooms Section */}
+                {nearbyListings.length > 0 && (
+                    <div className="container-custom mt-12">
+                        <h2 className="text-2xl font-bold text-gray-900 mb-6">Các phòng trọ gần đó</h2>
+                        {loadingNearby ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {[...Array(3)].map((_, index) => (
+                                    <LoadingSkeleton key={index} />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {nearbyListings.map((nearbyListing) => (
+                                    <ListingCard key={nearbyListing.id} listing={nearbyListing} />
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

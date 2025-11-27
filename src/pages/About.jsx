@@ -1,6 +1,13 @@
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 
+// Import team member images
+import nguyenduonganImg from '../assets/team/nguyenduongan.jpg';
+import lugialinhImg from '../assets/team/lugialinh.jpg';
+import nguyenphuocthoImg from '../assets/team/nguyenphuoctho.png';
+import vuquangImg from '../assets/team/vuquang.jpg';
+import vominhtrietImg from '../assets/team/vominhtriet.jpg';
+
 const About = () => {
     const teamMembers = [
         {
@@ -9,7 +16,7 @@ const About = () => {
             email: "nguyenduongan2007@gmail.com",
             facebook: "https://www.facebook.com/an.nguyen.813337",
             role: "Developer",
-            image: "https://media.discordapp.net/attachments/1425092456533459112/1442556550735724775/04072a389dbf009f526b95bc4d6d2813.png?ex=6925dcfb&is=69248b7b&hm=800e46232375c6706e8e2f00cafed6992b8868a49759a3cf4ef4b3aba29160c3&=&format=webp&quality=lossless"
+            image: nguyenduonganImg
         },
         {
             name: "Lư Gia Linh",
@@ -17,7 +24,7 @@ const About = () => {
             email: "711819lugialinh@gmail.com",
             facebook: "https://www.facebook.com/potatochipslover",
             role: "Developer",
-            image: "https://media.discordapp.net/attachments/1425092456533459112/1442554119167545374/516383077_1536344640662284_5961486254025736101_n.png?ex=6925dab7&is=69248937&hm=ff394a266e2623be48e0818d3267f0ec016b75e7d580b9ad0dbf657718bc99bc&=&format=webp&quality=lossless"
+            image: lugialinhImg
         },
         {
             name: "Nguyễn Phước Thọ",
@@ -25,7 +32,7 @@ const About = () => {
             email: "ptho3214@gmail.com",
             facebook: "https://www.facebook.com/tho.phuoc.10297",
             role: "Developer",
-            image: "https://media.discordapp.net/attachments/1425092456533459112/1442554718206296074/20250103_1031551.jpg?ex=6925db46&is=692489c6&hm=e908c871480bd9d80dab86afd8776862b28b0c7c1a24c588853414d931a8dff8&=&format=webp"
+            image: nguyenphuocthoImg
         },
         {
             name: "Vũ Quang",
@@ -33,7 +40,7 @@ const About = () => {
             email: "91vuquang@gmail.com",
             facebook: "https://www.facebook.com/quang.vu.657734",
             role: "Developer",
-            image: "https://scontent.fsgn5-5.fna.fbcdn.net/v/t1.6435-9/123725209_118323726745299_6682006222652791081_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=0O4-aFHRzJUQ7kNvwGi1_R5&_nc_oc=AdlFlk-5xe_zZkxi2ZnLYVPQzuxjooGUSB5DnR8Syi4nkGKf8JqdyIXW88YqU9vRbYs&_nc_zt=23&_nc_ht=scontent.fsgn5-5.fna&_nc_gid=xDu-5Xgf5zXhZ6JPC_1uDg&oh=00_AfhHPQMenHLcg1moAyO0NNcWJayINwz3nUl7wOwLJvMMyA&oe=694BEA1B"
+            image: vuquangImg
         },
         {
             name: "Võ Minh Triết",
@@ -41,7 +48,7 @@ const About = () => {
             email: "vominhtriet2k7@gmail.com",
             facebook: "https://www.facebook.com/triet.vo.144690",
             role: "Developer",
-            image: "https://media.discordapp.net/attachments/1425092456533459112/1442562253625757796/70a50cf9-462b-4410-9b5d-1ad2f6acf44e.png?ex=6925e24a&is=692490ca&hm=e6857652f74c9eacc37f6393d712e27ed4d525935f2cb15272c5f0d1cbacc85e&=&format=webp&quality=lossless&width=720&height=960"
+            image: vominhtrietImg
         }
     ];
 
@@ -203,7 +210,7 @@ const About = () => {
                             </div>
                             <div className="flex flex-col sm:flex-row sm:justify-between">
                                 <span className="font-semibold text-slate-400">Công nghệ sử dụng:</span>
-                                <span className="text-right">Antigravity của Google, Supabase, ChatGPT, Web scraper extensions</span>
+                                <span className="text-right">Antigravity của Google, Supabase, Web scraper extensions</span>
                             </div>
                         </div>
                     </div>
