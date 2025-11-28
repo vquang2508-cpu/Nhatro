@@ -50,9 +50,6 @@ const EditListing = () => {
                 return;
             }
 
-            // Parse images
-            const images = (data.image_0 || '').split('\n');
-
             setFormData({
                 title: data.title || '',
                 price_num: data.price_num || '',
@@ -62,10 +59,10 @@ const EditListing = () => {
                 address: data.address || '',
                 room_count: data.room_count ? data.room_count.replace(' phòng', '') : '',
                 description: data.description || '',
-                image_0: images[0] || '',
-                image_1: images[1] || '',
-                image_2: images[2] || '',
-                image_3: images[3] || '',
+                image_0: data.image_0 || '',
+                image_1: data.image_1 || '',
+                image_2: data.image_2 || '',
+                image_3: data.image_3 || '',
                 contact_name: data['Tên chủ'] || '',
                 contact_phone: data['SĐT'] || ''
             });
@@ -103,14 +100,6 @@ const EditListing = () => {
             const priceText = formatPrice(parseFloat(formData.price_num));
             const areaText = `${formData.area_num}m2`;
 
-            // Combine images into one string (newline separated)
-            const images = [
-                formData.image_0,
-                formData.image_1,
-                formData.image_2,
-                formData.image_3
-            ].filter(Boolean).join('\n');
-
             // Prepare data for update
             const listingData = {
                 title: formData.title,
@@ -123,7 +112,10 @@ const EditListing = () => {
                 address: formData.address,
                 room_count: `${formData.room_count} phòng`,
                 description: formData.description,
-                image_0: images,
+                image_0: formData.image_0,
+                image_1: formData.image_1,
+                image_2: formData.image_2,
+                image_3: formData.image_3,
                 'Tên chủ': formData.contact_name,
                 'SĐT': formData.contact_phone,
                 is_visible: false // Reset to hidden on update

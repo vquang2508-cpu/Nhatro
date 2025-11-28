@@ -26,12 +26,14 @@ const Detail = () => {
     const [submitting, setSubmitting] = useState(false);
     const [nearbyListings, setNearbyListings] = useState([]);
     const [loadingNearby, setLoadingNearby] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
     const { user, isAdmin } = useAuth();
 
     const fetchListingDetail = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
+            setSelectedImage(null);
             const { data, error } = await supabase
                 .from('listings')
                 .select('*')
@@ -263,14 +265,72 @@ const Detail = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Main Content */}
                     <div className="lg:col-span-2 space-y-8">
-                        {/* Image */}
-                        <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
-                            <img
-                                src={getThumbnail(listing?.image_0)}
-                                alt={listing?.title}
-                                className="w-full h-auto object-cover aspect-video"
-                                onError={(e) => { e.target.src = 'https://via.placeholder.com/800x500?text=Error'; }}
-                            />
+                        {/* Image Gallery */}
+                        <div className="space-y-4">
+                            {/* Main Image */}
+                            <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
+                                <img
+                                    src={selectedImage || getThumbnail(listing?.image_0)}
+                                    alt={listing?.title}
+                                    className="w-full h-auto object-cover aspect-video transition-all duration-300"
+                                    onError={(e) => { e.target.src = 'https://via.placeholder.com/800x500?text=Error'; }}
+                                />
+                            </div>
+                            {/* Sub Images */}
+                            {(listing?.image_1 || listing?.image_2 || listing?.image_3) && (
+                                <div className="grid grid-cols-4 gap-4">
+                                    <div
+                                        className={`bg-white rounded-xl overflow-hidden shadow-sm aspect-video cursor-pointer border-2 ${selectedImage === getThumbnail(listing?.image_0) ? 'border-blue-600' : 'border-transparent'}`}
+                                        onClick={() => setSelectedImage(getThumbnail(listing?.image_0))}
+                                    >
+                                        <img
+                                            src={getThumbnail(listing?.image_0)}
+                                            alt={`${listing.title} - Main`}
+                                            className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                                            onError={(e) => { e.target.src = 'https://via.placeholder.com/400x300?text=Error'; }}
+                                        />
+                                    </div>
+                                    {listing?.image_1 && (
+                                        <div
+                                            className={`bg-white rounded-xl overflow-hidden shadow-sm aspect-video cursor-pointer border-2 ${selectedImage === listing.image_1 ? 'border-blue-600' : 'border-transparent'}`}
+                                            onClick={() => setSelectedImage(listing.image_1)}
+                                        >
+                                            <img
+                                                src={listing.image_1}
+                                                alt={`${listing.title} - 1`}
+                                                className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                                                onError={(e) => { e.target.src = 'https://via.placeholder.com/400x300?text=Error'; }}
+                                            />
+                                        </div>
+                                    )}
+                                    {listing?.image_2 && (
+                                        <div
+                                            className={`bg-white rounded-xl overflow-hidden shadow-sm aspect-video cursor-pointer border-2 ${selectedImage === listing.image_2 ? 'border-blue-600' : 'border-transparent'}`}
+                                            onClick={() => setSelectedImage(listing.image_2)}
+                                        >
+                                            <img
+                                                src={listing.image_2}
+                                                alt={`${listing.title} - 2`}
+                                                className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                                                onError={(e) => { e.target.src = 'https://via.placeholder.com/400x300?text=Error'; }}
+                                            />
+                                        </div>
+                                    )}
+                                    {listing?.image_3 && (
+                                        <div
+                                            className={`bg-white rounded-xl overflow-hidden shadow-sm aspect-video cursor-pointer border-2 ${selectedImage === listing.image_3 ? 'border-blue-600' : 'border-transparent'}`}
+                                            onClick={() => setSelectedImage(listing.image_3)}
+                                        >
+                                            <img
+                                                src={listing.image_3}
+                                                alt={`${listing.title} - 3`}
+                                                className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                                                onError={(e) => { e.target.src = 'https://via.placeholder.com/400x300?text=Error'; }}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                         {/* Info */}
                         <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm">

@@ -52,14 +52,6 @@ const CreateListing = () => {
             const today = new Date();
             const dateString = `Ngày đăng: ${today.getDate()}-${today.getMonth() + 1}-${today.getFullYear()}`;
 
-            // Combine images into one string (newline separated)
-            const images = [
-                formData.image_0,
-                formData.image_1,
-                formData.image_2,
-                formData.image_3
-            ].filter(Boolean).join('\n');
-
             // Prepare data for insertion
             const listingData = {
                 title: formData.title,
@@ -72,7 +64,10 @@ const CreateListing = () => {
                 address: formData.address,
                 room_count: `${formData.room_count} phòng`,
                 description: formData.description,
-                image_0: images, // Store all images in image_0
+                image_0: formData.image_0,
+                image_1: formData.image_1,
+                image_2: formData.image_2,
+                image_3: formData.image_3,
                 'Tên chủ': formData.contact_name,
                 'SĐT': formData.contact_phone,
                 'Ngày đăng': dateString,
