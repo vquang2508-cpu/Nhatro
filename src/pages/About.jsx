@@ -56,13 +56,7 @@ const About = () => {
         <div className="min-h-screen bg-background">
             {/* 1. Hero Section */}
             <section className="relative bg-slate-900 text-white py-20 lg:py-32 overflow-hidden">
-                <div className="absolute inset-0 z-0 opacity-40">
-                    <img
-                        src="https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/583901955_1263159542506417_9120507689823449605_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=127cfc&_nc_ohc=MqM11rAQo-4Q7kNvwGue9Rf&_nc_oc=AdmdR6giSIozzqtuW-Od4UVUuqD1_5lMtP8cz6P6dips8c9y4Pm7SdyZZLexF2nC7sA&_nc_zt=23&_nc_ht=scontent.fsgn5-9.fna&_nc_gid=aa5IG1EDCa4-f-CvAMydMQ&oh=00_AfipjtZiczR7fZqkJJJ84pzpZx7OGYwt1PDO4OxXsbblwA&oe=6928E953"
-                        alt="Hero Background"
-                        className="w-full h-full object-cover"
-                    />
-                </div>
+
                 <div className="container mx-auto px-4 relative z-10 text-center">
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
                         Hành trình tìm trọ, bắt đầu từ sự thấu hiểu.
