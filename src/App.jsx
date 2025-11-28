@@ -17,8 +17,6 @@ import EditListing from './pages/EditListing';
 
 import { AuthProvider } from './context/AuthContext';
 
-import Support from './pages/Support';
-
 function App() {
   return (
     <AuthProvider>
@@ -33,7 +31,6 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/about" element={<About />} />
-              <Route path="/support" element={<Support />} />
 
               {/* Protected Routes */}
               <Route

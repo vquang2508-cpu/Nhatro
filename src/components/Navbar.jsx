@@ -65,11 +65,6 @@ const Navbar = () => {
                             </Link>
                         )}
 
-                        {/* Support Link */}
-                        <Link to="/support" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">
-                            Hỗ trợ
-                        </Link>
-
                         {/* About Us */}
                         <Link to="/about" className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200">
                             About Us
