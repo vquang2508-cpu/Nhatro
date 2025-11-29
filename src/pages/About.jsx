@@ -84,7 +84,35 @@ const About = () => {
                 </div>
             </section>
 
-            {/* 3. Core Values */}
+            {/* 3. Video Tutorial Section */}
+            <section className="py-16 bg-white">
+                <div className="container mx-auto px-4">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="text-center mb-8">
+                            <h2 className="text-3xl font-bold text-slate-800 mb-3">
+                                Hướng Dẫn Sử Dụng
+                            </h2>
+                            <p className="text-slate-600 text-lg">
+                                Xem video hướng dẫn chi tiết về cách sử dụng website Trọ đâu cũng được
+                            </p>
+                        </div>
+
+                        {/* Responsive YouTube embed */}
+                        <div className="relative w-full rounded-xl overflow-hidden shadow-lg" style={{ paddingBottom: '56.25%' }}>
+                            <iframe
+                                className="absolute top-0 left-0 w-full h-full"
+                                src="https://www.youtube.com/embed/VTYV2hHk6Lg"
+                                title="Hướng dẫn sử dụng website"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                            ></iframe>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* 4. Core Values */}
             <section className="py-16 bg-slate-50">
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl font-bold mb-12 text-center text-slate-800">Điều chúng tôi cam kết</h2>
@@ -134,7 +162,7 @@ const About = () => {
                 </div>
             </section>
 
-            {/* 4. Meet The Team */}
+            {/* 5. Meet The Team */}
             <section className="py-16 bg-white">
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl font-bold mb-12 text-center text-slate-800">Đội Ngũ Phát Triển</h2>
@@ -174,7 +202,7 @@ const About = () => {
                 </div>
             </section>
 
-            {/* 5. Project Context */}
+            {/* 6. Project Context */}
             <section className="py-16 bg-slate-900 text-white">
                 <div className="container mx-auto px-4">
                     <div className="max-w-3xl mx-auto border border-slate-700 rounded-xl p-8 bg-slate-800/50">
@@ -211,7 +239,7 @@ const About = () => {
                 </div>
             </section>
 
-            {/* 6. Footer Section */}
+            {/* 7. Footer Section */}
             <footer className="bg-slate-950 text-slate-400 py-12 border-t border-slate-900">
                 <div className="container mx-auto px-4 text-center">
                     <p className="mb-6 text-lg">
