@@ -19,9 +19,5 @@
                 }
             ]
         }
-    ],
-    "images": {
-        "remotePatterns": [],
-        "unoptimized": true
-    }
+    ]
 }
