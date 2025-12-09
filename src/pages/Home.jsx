@@ -225,6 +225,31 @@ const Home = () => {
                     </Link>
                 </div>
             </section>
+            {/* Video Introduction Section */}
+            <section className="py-16 bg-gray-50">
+                <div className="container-custom">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="text-center mb-8">
+                            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+                                Giới Thiệu Về Chúng Tôi
+                            </h2>
+                            <p className="text-gray-600 text-lg">
+                                Khám phá thêm về hành trình và sứ mệnh của Trọ đâu cũng được
+                            </p>
+                        </div>
+                        <div className="relative w-full rounded-xl overflow-hidden shadow-lg" style={{ paddingBottom: '56.25%' }}>
+                            <iframe
+                                className="absolute top-0 left-0 w-full h-full"
+                                src="https://www.youtube.com/embed/iG01-YZiV0g"
+                                title="Video Giới Thiệu"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                            ></iframe>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     );
 };

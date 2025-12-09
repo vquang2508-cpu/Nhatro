@@ -1,14 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-
-// Import team member images
-import nguyenduonganImg from '../assets/team/nguyenduongan.jpg';
-import lugialinhImg from '../assets/team/lugialinh.jpg';
-import nguyenphuocthoImg from '../assets/team/nguyenphuoctho.png';
-import vuquangImg from '../assets/team/vuquang.jpg';
-import vominhtrietImg from '../assets/team/vominhtriet.jpg';
+import { supabase } from '../lib/supabaseClient';
 
 const About = () => {
+    const [images, setImages] = useState({});
+
+    useEffect(() => {
+        const fetchImages = async () => {
+            const { data, error } = await supabase
+                .from('team_images')
+                .select('name, mime_type, image_data');
+
+            if (data) {
+                const imgMap = {};
+                data.forEach(img => {
+                    imgMap[img.name] = `data:${img.mime_type};base64,${img.image_data}`;
+                });
+                setImages(imgMap);
+            }
+        };
+
+        fetchImages();
+    }, []);
+
     const teamMembers = [
         {
             name: "Nguyễn Dương An",
@@ -16,7 +30,7 @@ const About = () => {
             email: "nguyenduongan2007@gmail.com",
             facebook: "https://www.facebook.com/an.nguyen.813337",
             role: "Developer",
-            image: nguyenduonganImg
+            image: images['An']
         },
         {
             name: "Lư Gia Linh",
@@ -24,7 +38,7 @@ const About = () => {
             email: "711819lugialinh@gmail.com",
             facebook: "https://www.facebook.com/potatochipslover",
             role: "Developer",
-            image: lugialinhImg
+            image: images['Linh']
         },
         {
             name: "Nguyễn Phước Thọ",
@@ -32,7 +46,7 @@ const About = () => {
             email: "ptho3214@gmail.com",
             facebook: "https://www.facebook.com/tho.phuoc.10297",
             role: "Developer",
-            image: nguyenphuocthoImg
+            image: images['Tho']
         },
         {
             name: "Vũ Quang",
@@ -40,7 +54,7 @@ const About = () => {
             email: "91vuquang@gmail.com",
             facebook: "https://www.facebook.com/quang.vu.657734",
             role: "Developer",
-            image: vuquangImg
+            image: images['Quang']
         },
         {
             name: "Võ Minh Triết",
@@ -48,7 +62,7 @@ const About = () => {
             email: "vominhtriet2k7@gmail.com",
             facebook: "https://www.facebook.com/triet.vo.144690",
             role: "Developer",
-            image: vominhtrietImg
+            image: images['Triet']
         }
     ];
 
