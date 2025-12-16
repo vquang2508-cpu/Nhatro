@@ -259,6 +259,16 @@ const About = () => {
                     <p className="mb-6 text-lg">
                         Chúng em xin gửi lời cảm ơn chân thành đến Giảng viên <span className="text-white font-semibold">Lê Nguyễn Tường Nhi</span> và <span className="text-white font-semibold">Huỳnh Thụy Bảo Trân</span> đã tận tình hướng dẫn chúng em.
                     </p>
+                    <div className="flex flex-col items-center justify-center space-y-4 mb-8">
+                        <h4 className="text-white font-bold text-lg">Kết nối với chúng tôi</h4>
+                        <div className="bg-white p-2 rounded-lg">
+                            <img
+                                src="/qr_code.png"
+                                alt="QR Code"
+                                className="w-32 h-32 object-contain"
+                            />
+                        </div>
+                    </div>
                     <div className="flex flex-col items-center justify-center space-y-2">
                         <h4 className="text-white font-bold mb-2">Liên hệ:</h4>
                         <a href="mailto:vominhtriet2k7@gmail.com" className="hover:text-blue-400 transition-colors">
