@@ -265,7 +265,7 @@ const About = () => {
                             <img
                                 src="/qr_code.png"
                                 alt="QR Code"
-                                className="w-32 h-32 object-contain"
+                                className="w-64 h-64 object-contain"
                             />
                         </div>
                     </div>
